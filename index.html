@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Waktu Sholat Presisi POB Cibeas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        arabic: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles for Printing and Smooth Transitions */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-only { display: block !important; }
+            .card-print { border: 1px solid #ccc !important; box-shadow: none !important; background: white !important; color: black !important; }
+        }
+        .bg-pattern {
+            background-color: #022c22;
+            background-image: radial-gradient(#059669 0.75px, transparent 0.75px), radial-gradient(#059669 0.75px, #022c22 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0,15px 15px;
+            opacity: 0.95;
+        }
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(6, 78, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .glass-card-hover:hover {
+            background: rgba(6, 78, 59, 0.6);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-full bg-slate-950 font-sans text-slate-100 antialiased flex flex-col justify-between">
+
+    <!-- Navigation Header -->
+    <header class="no-print sticky top-0 z-50 border-b border-emerald-800/50 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-amber-500 flex items-center justify-center shadow-lg shadow-emerald-900/40">
+                    <i data-lucide="compass" class="w-7 h-7 text-slate-950 stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                        Falak POB Cibeas
+                    </h1>
+                    <p class="text-xs text-slate-400">Kalkulator Waktu Sholat Presisi & Astronomy Islam</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 text-xs text-emerald-400/80 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span id="headerLocationName">POB Cibeas Pelabuhanratu</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8 w-full">
+        
+        <!-- Hero & Info Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-pattern p-6 sm:p-8 border border-emerald-700/40 shadow-2xl">
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="max-w-2xl space-y-2">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+                        <i data-lucide="star" class="w-3.5 h-3.5"></i> Standar Resmi POB Cibeas / Kemenag RI
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+                        Hisab Waktu Sholat Accurate Astronomi
+                    </h2>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Perhitungan presisi berdasarkan posisi lintang, bujur, elevasi ketinggian, sudut fajar/syafaq, serta koreksi refraksi atmosfer POB Cibeas Pelabuhanratu, Sukabumi.
+                    </p>
+                </div>
+
+                <!-- Next Prayer Timer Card -->
+                <div class="bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-5 shadow-xl flex flex-col items-center justify-center text-center min-w-[240px]">
+                    <span class="text-xs font-medium text-emerald-400 uppercase tracking-widest" id="nextPrayerLabel">Menunggu Sholat...</span>
+                    <div class="text-3xl font-extrabold font-mono text-amber-400 my-1 tracking-tight" id="countdownTimer">00:00:00</div>
+                    <span class="text-xs text-slate-400" id="nextPrayerTime">--:-- WIB</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Location Presets & GPS Button -->
+        <section class="no-print space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                    <i data-lucide="navigation" class="w-4 h-4 text-emerald-400"></i> Pilih Lokasi Cepat
+                </h3>
+                <button id="btnGPS" onclick="getGPSLocation()" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-medium text-sm transition-all shadow-lg shadow-emerald-900/30 hover:shadow-emerald-600/30">
+                    <i data-lucide="crosshair" class="w-4 h-4"></i>
+                    <span>Gunakan Lokasi Saya Saat Ini (GPS)</span>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
+                <button onclick="setPresetLocation(-6.9883, 106.5502, 50, 7, 'POB Cibeas Pelabuhanratu')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-bold text-amber-400 group-hover:text-amber-300">POB Cibeas</div>
+                    <div class="text-[10px] text-slate-400">Pelabuhanratu</div>
+                </button>
+                <button onclick="setPresetLocation(-6.9277, 106.9299, 584, 7, 'Kota Sukabumi')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-semibold text-slate-200 group-hover:text-amber-300">Sukabumi</div>
+                    <div class="text-[10px] text-slate-400">Jawa Barat</div>
+                </button>
+                <button onclick="setPresetLocation(-6.2088, 106.8456, 10, 7, 'DKI Jakarta')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-semibold text-slate-200 group-hover:text-amber-300">Jakarta</div>
+                    <div class="text-[10px] text-slate-400">DKI Jakarta</div>
+                </button>
+                <button onclick="setPresetLocation(-6.9175, 107.6191, 768, 7, 'Kota Bandung')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-semibold text-slate-200 group-hover:text-amber-300">Bandung</div>
+                    <div class="text-[10px] text-slate-400">Jawa Barat</div>
+                </button>
+                <button onclick="setPresetLocation(-7.2575, 112.7521, 5, 7, 'Kota Surabaya')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-semibold text-slate-200 group-hover:text-amber-300">Surabaya</div>
+                    <div class="text-[10px] text-slate-400">Jawa Timur</div>
+                </button>
+                <button onclick="setPresetLocation(3.5952, 98.6722, 25, 7, 'Kota Medan')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-semibold text-slate-200 group-hover:text-amber-300">Medan</div>
+                    <div class="text-[10px] text-slate-400">Sumatera Utara</div>
+                </button>
+                <button onclick="setPresetLocation(-5.1477, 119.4327, 10, 8, 'Kota Makassar')" class="preset-btn px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-950 border border-slate-800 hover:border-emerald-500/50 text-xs font-medium text-left transition-all group">
+                    <div class="font-semibold text-slate-200 group-hover:text-amber-300">Makassar</div>
+                    <div class="text-[10px] text-slate-400">Sulawesi Selatan</div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Today Prayer Times Display -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="clock" class="w-5 h-5 text-amber-400"></i> Waktu Sholat Hari Ini
+                    </h3>
+                    <p class="text-xs text-slate-400" id="currentFullDate">Matahari & Astronomi</p>
+                </div>
+                <button onclick="window.print()" class="no-print inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-all">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span>Cetak</span>
+                </button>
+            </div>
+
+            <!-- Grid Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3" id="prayerCardsContainer">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Input Parameters Section -->
+        <section class="no-print bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+            <div class="border-b border-slate-800 pb-4 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-emerald-400"></i> Parameter Lokasi & Astronomi
+                    </h3>
+                    <p class="text-xs text-slate-400">Sesuaikan koordinat geografis dan nilai ijtihad falakiyah</p>
+                </div>
+                <button onclick="calculateAndRender()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md shadow-amber-500/20">
+                    Hitung Ulang
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Tanggal -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tanggal</label>
+                    <input type="date" id="inputDate" onchange="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <!-- Lintang (Latitude) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Lintang (Latitude °)</label>
+                    <input type="number" step="any" id="inputLat" value="-6.9883" oninput="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Contoh: -6.9883">
+                </div>
+
+                <!-- Bujur (Longitude) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Bujur (Longitude °)</label>
+                    <input type="number" step="any" id="inputLng" value="106.5502" oninput="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="Contoh: 106.5502">
+                </div>
+
+                <!-- Ketinggian Elevasi -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Elevasi (Meter mdpl)</label>
+                    <input type="number" id="inputElevation" value="50" oninput="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="DPL (meter)">
+                </div>
+
+                <!-- Zona Waktu -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Zona Waktu (GMT/UTC)</label>
+                    <select id="inputTimeZone" onchange="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                        <option value="7" selected>UTC+7 (WIB)</option>
+                        <option value="8">UTC+8 (WITA)</option>
+                        <option value="9">UTC+9 (WIT)</option>
+                    </select>
+                </div>
+
+                <!-- Ihtiyati -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ihtiyati (Menit Pengaman)</label>
+                    <input type="number" id="inputIhtiyati" value="2" min="0" max="10" oninput="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <!-- Sudut Subuh -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Sudut Subuh (°)</label>
+                    <input type="number" step="any" id="inputSubuhAngle" value="20" oninput="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <!-- Sudut Isya -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Sudut Isya (°)</label>
+                    <input type="number" step="any" id="inputIsyaAngle" value="18" oninput="calculateAndRender()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+            </div>
+        </section>
+
+        <!-- Astronomy Parameters & Qibla Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Qibla Direction Card -->
+            <div class="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i> Arah Kiblat & Ka'bah
+                        </h3>
+                        <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-full font-mono" id="qiblaDegree">
+                            0.0° UB-TL
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                        Arah Kiblat dihitung berdasarkan Rumus Trigonometri Bola (Spherical Trigonometry) relatif dari posisi koordinat Anda menuju Ka'bah Makkah (21.4225° N, 39.8262° E).
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800 text-center">
+                    <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wider">Arah Kiblat dari Utara</div>
+                        <div class="text-lg font-bold text-amber-400 font-mono" id="qiblaAzimuth">0°</div>
+                    </div>
+                    <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wider">Jarak ke Ka'bah</div>
+                        <div class="text-lg font-bold text-emerald-400 font-mono" id="qiblaDistance">0 km</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Astronomical Calculation Details -->
+            <div class="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl">
+                <h3 class="text-base font-bold text-white flex items-center gap-2 mb-4">
+                    <i data-lucide="sun" class="w-5 h-5 text-amber-400"></i> Parameter Astronomi Aktual
+                </h3>
+                <div class="space-y-3 text-xs">
+                    <div class="flex justify-between py-1.5 border-b border-slate-800">
+                        <span class="text-slate-400">Deklinasi Matahari (&delta;):</span>
+                        <span class="font-mono text-emerald-400 font-medium" id="astroDeclination">0° 0' 0"</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-slate-800">
+                        <span class="text-slate-400">Perataan Waktu / Eq. of Time (e):</span>
+                        <span class="font-mono text-emerald-400 font-medium" id="astroEot">0m 0s</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-slate-800">
+                        <span class="text-slate-400">Waktu Istiwa / Transit Dzuhur:</span>
+                        <span class="font-mono text-emerald-400 font-medium" id="astroTransit">12:00:00</span>
+                    </div>
+                    <div class="flex justify-between py-1.5 border-b border-slate-800">
+                        <span class="text-slate-400">Dip Horizon (Koreksi Elevasi):</span>
+                        <span class="font-mono text-emerald-400 font-medium" id="astroDip">0° 0'</span>
+                    </div>
+                    <div class="flex justify-between py-1.5">
+                        <span class="text-slate-400">Refraksi & Semi-Diameter:</span>
+                        <span class="font-mono text-emerald-400 font-medium">34' + 16' = 50'</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Schedule Table Section -->
+        <section class="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-5 h-5 text-emerald-400"></i> Jadwal Sholat Bulanan
+                    </h3>
+                    <p class="text-xs text-slate-400" id="monthlyTableTitle">Jadwal Sebulan POB Cibeas</p>
+                </div>
+                <div class="no-print flex items-center gap-2">
+                    <select id="monthlySelectMonth" onchange="generateMonthlyTable()" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none">
+                        <option value="0">Januari</option>
+                        <option value="1">Februari</option>
+                        <option value="2">Maret</option>
+                        <option value="3">April</option>
+                        <option value="4">Mei</option>
+                        <option value="5">Juni</option>
+                        <option value="6">Juli</option>
+                        <option value="7">Agustus</option>
+                        <option value="8">September</option>
+                        <option value="9">Oktober</option>
+                        <option value="10">November</option>
+                        <option value="11">Desember</option>
+                    </select>
+                    <input type="number" id="monthlySelectYear" onchange="generateMonthlyTable()" class="w-20 bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 font-semibold tracking-wider">
+                        <tr>
+                            <th class="px-3 py-3 rounded-l-xl">Tgl</th>
+                            <th class="px-3 py-3">Subuh</th>
+                            <th class="px-3 py-3">Terbit</th>
+                            <th class="px-3 py-3">Dhuha</th>
+                            <th class="px-3 py-3">Dzuhur</th>
+                            <th class="px-3 py-3">Ashar</th>
+                            <th class="px-3 py-3">Maghrib</th>
+                            <th class="px-3 py-3 rounded-r-xl">Isya</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthlyTableBody" class="divide-y divide-slate-800/50 font-mono">
+                        <!-- Table rows populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Metodology Explanation -->
+        <section class="bg-slate-900/40 rounded-2xl p-6 border border-slate-800/60 text-xs text-slate-400 space-y-3">
+            <h4 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                <i data-lucide="book-open" class="w-4 h-4"></i> Metodologi Ilmu Falak POB Cibeas Pelabuhanratu
+            </h4>
+            <p class="leading-relaxed">
+                Pusat Observasi Bulan (POB) Cibeas berada di garis pantai Pelabuhanratu, Kabupaten Sukabumi, Jawa Barat. POB Cibeas terkenal sebagai salah satu titik rukyatul hilal utama di Indonesia.
+            </p>
+            <ul class="list-disc pl-5 space-y-1 text-slate-400">
+                <li><strong class="text-slate-200">Subuh:</strong> Dihitung saat kedudukan matahari berada $20^\circ$ di bawah ufuk timur ($h = -20^\circ$).</li>
+                <li><strong class="text-slate-200">Terbit & Maghrib:</strong> Memperhitungkan posisi pusat matahari pada $-0.833^\circ$ (refraksi $34'$ + semi-diameter $16'$) ditambah koreksi kerendahan ufuk (*Dip of Horizon* = $1.76' \times \sqrt{\text{Elevasi meter}}$).</li>
+                <li><strong class="text-slate-200">Dzuhur:</strong> Dihitung saat Matahari melintasi meridian langit (*Istiwa / Transit*) ditambah nilai pengaman (*Ihtiyati* $+2$ menit).</li>
+                <li><strong class="text-slate-200">Ashar:</strong> Dihitung saat panjang bayangan objek sama dengan panjang objek itu sendiri ditambah panjang bayangan waktu istiwa.</li>
+                <li><strong class="text-slate-200">Isya:</strong> Dihitung saat hilangnya cahaya merah (*Syafaq*) di ufuk barat, yakni saat posisi matahari $18^\circ$ di bawah ufuk ($h = -18^\circ$).</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="no-print border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div>
+                © 2026 Aplikasi Kalkulator Falak POB Cibeas Pelabuhanratu, Sukabumi.
+            </div>
+            <div class="text-emerald-500 font-semibold">
+                Dibuat untuk Presisi Jadwal Ibadah Umat Islam
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Default State Configuration
+        let state = {
+            lat: -6.9883,
+            lng: 106.5502,
+            elevation: 50,
+            timeZone: 7,
+            ihtiyati: 2,
+            subuhAngle: 20,
+            isyaAngle: 18,
+            locationName: "POB Cibeas Pelabuhanratu",
+            date: new Date()
+        };
+
+        // Initialize Application Inputs
+        window.onload = function() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            
+            document.getElementById('inputDate').value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('monthlySelectYear').value = yyyy;
+            document.getElementById('monthlySelectMonth').value = today.getMonth();
+
+            calculateAndRender();
+
+            // Interval Update Timer Countdown Every Second
+            setInterval(updateCountdown, 1000);
+        };
+
+        // Set Preset Location Handler
+        function setPresetLocation(lat, lng, elevation, tz, name) {
+            document.getElementById('inputLat').value = lat;
+            document.getElementById('inputLng').value = lng;
+            document.getElementById('inputElevation').value = elevation;
+            document.getElementById('inputTimeZone').value = tz;
+            state.locationName = name;
+            
+            calculateAndRender();
+        }
+
+        // Automatic GPS Location API
+        function getGPSLocation() {
+            const btn = document.getElementById('btnGPS');
+            if (!navigator.geolocation) {
+                alert("Browser Anda tidak mendukung Geolocation.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.classList.add('opacity-70');
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Mendeteksi Lokasi...</span>`;
+            lucide.createIcons();
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const altitude = position.coords.altitude || 10;
+
+                    document.getElementById('inputLat').value = lat.toFixed(4);
+                    document.getElementById('inputLng').value = lng.toFixed(4);
+                    document.getElementById('inputElevation').value = Math.round(altitude);
+                    state.locationName = "Lokasi Saya (GPS)";
+
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-70');
+                    btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i><span>Gunakan Lokasi Saya Saat Ini (GPS)</span>`;
+                    lucide.createIcons();
+
+                    calculateAndRender();
+                },
+                (error) => {
+                    alert("Gagal mendapatkan lokasi GPS: " + error.message);
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-70');
+                    btn.innerHTML = `<i data-lucide="crosshair" class="w-4 h-4"></i><span>Gunakan Lokasi Saya Saat Ini (GPS)</span>`;
+                    lucide.createIcons();
+                }
+            );
+        }
+
+        // Read Inputs into State
+        function updateStateFromInputs() {
+            const dateVal = document.getElementById('inputDate').value;
+            if (dateVal) {
+                const parts = dateVal.split('-');
+                state.date = new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+            state.lat = parseFloat(document.getElementById('inputLat').value) || 0;
+            state.lng = parseFloat(document.getElementById('inputLng').value) || 0;
+            state.elevation = parseFloat(document.getElementById('inputElevation').value) || 0;
+            state.timeZone = parseFloat(document.getElementById('inputTimeZone').value) || 7;
+            state.ihtiyati = parseInt(document.getElementById('inputIhtiyati').value) || 0;
+            state.subuhAngle = parseFloat(document.getElementById('inputSubuhAngle').value) || 20;
+            state.isyaAngle = parseFloat(document.getElementById('inputIsyaAngle').value) || 18;
+
+            document.getElementById('headerLocationName').innerText = state.locationName;
+        }
+
+        // Trigonometric Helpers (Degrees)
+        const rad = deg => deg * Math.PI / 180;
+        const deg = rad => rad * 180 / Math.PI;
+
+        // Astronomical Algorithms (Jean Meeus / Standard Falak Kemenag)
+        function calculateSolarPosition(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+
+            // Day of Year
+            const N1 = Math.floor(275 * month / 9);
+            const N2 = Math.floor((month + 9) / 12);
+            const N3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3));
+            const N = N1 - (N2 * N3) + day - 30;
+
+            // Approximate solar mean anomaly (B)
+            const B = 360 * (N - 81) / 365;
+            const B_rad = rad(B);
+
+            // Equation of Time (e) in minutes
+            const e = 9.87 * Math.sin(2 * B_rad) - 7.53 * Math.cos(B_rad) - 1.5 * Math.sin(B_rad);
+
+            // Solar Declination (delta) in degrees
+            const declination = 23.45 * Math.sin(rad(360 * (284 + N) / 365));
+
+            return { declination, e, dayOfYear: N };
+        }
+
+        // Calculate Prayer Times Core
+        function computePrayerTimes(date, lat, lng, elevation, tz, ihtiyati, subuhAngle, isyaAngle) {
+            const solar = calculateSolarPosition(date);
+            const delta = solar.declination;
+            const e = solar.e;
+
+            // Dip of Horizon (Kerendahan Ufuk) in degrees based on elevation in meters
+            const dip = 0.0293 * Math.sqrt(elevation); // Approx 1.76 arcminutes per sqrt(m)
+
+            // Meridian Transit Time (Dzuhur tanpa ihtiyati) in hours GMT/Local
+            const transit = 12 + tz - (lng / 15) - (e / 60);
+
+            // Hour Angle Helper Function
+            function hourAngle(altitude) {
+                const cosH = (Math.sin(rad(altitude)) - Math.sin(rad(lat)) * Math.sin(rad(delta))) /
+                             (Math.cos(rad(lat)) * Math.cos(rad(delta)));
+                
+                if (cosH > 1) return null;  // Never rises
+                if (cosH < -1) return null; // Never sets
+                return deg(Math.acos(cosH));
+            }
+
+            // 1. Subuh (h = -subuhAngle)
+            const H_subuh = hourAngle(-subuhAngle);
+            const subuh = transit - (H_subuh / 15) + (ihtiyati / 60);
+
+            // 2. Terbit / Syuruq (h = -0.8333 - dip)
+            const H_terbit = hourAngle(-0.8333 - dip);
+            const terbit = transit - (H_terbit / 15) - (ihtiyati / 60); // Syuruq tanpa ihtiyati penambahan
+
+            // 3. Dhuha (h = +4.5 degrees)
+            const H_dhuha = hourAngle(4.5);
+            const dhuha = transit - (H_dhuha / 15) + (ihtiyati / 60);
+
+            // 4. Dzuhur
+            const dzuhur = transit + (ihtiyati / 60);
+
+            // 5. Ashar (Shadow length = 1 + tan|lat - delta|)
+            const A = Math.abs(lat - delta);
+            const h_ashar = deg(Math.atan(1 / (1 + Math.tan(rad(A)))));
+            const H_ashar = hourAngle(h_ashar);
+            const ashar = transit + (H_ashar / 15) + (ihtiyati / 60);
+
+            // 6. Maghrib (h = -0.8333 - dip)
+            const H_maghrib = hourAngle(-0.8333 - dip);
+            const maghrib = transit + (H_maghrib / 15) + (ihtiyati / 60);
+
+            // 7. Isya (h = -isyaAngle)
+            const H_isya = hourAngle(-isyaAngle);
+            const isya = transit + (H_isya / 15) + (ihtiyati / 60);
+
+            return {
+                subuh, terbit, dhuha, dzuhur, ashar, maghrib, isya,
+                transit, delta, e, dip
+            };
+        }
+
+        // Calculate Qibla Direction & Distance
+        function calculateQibla(lat, lng) {
+            // Ka'bah Coordinates
+            const latK = 21.4225;
+            const lngK = 39.8262;
+
+            const dLng = rad(lngK - lng);
+            const phi = rad(lat);
+            const phiK = rad(latK);
+
+            // Spherical Trigonometry Formula
+            const y = Math.sin(dLng);
+            const x = Math.cos(phi) * Math.tan(phiK) - Math.sin(phi) * Math.cos(dLng);
+            let qiblaDeg = deg(Math.atan2(y, x));
+
+            if (qiblaDeg < 0) qiblaDeg += 360;
+
+            // Distance calculation (Haversine formula)
+            const R = 6371; // Earth radius km
+            const dLat = rad(latK - lat);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(rad(lat)) * Math.cos(rad(latK)) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = R * c;
+
+            return { azimuth: qiblaDeg, distance: Math.round(distance) };
+        }
+
+        // Format Fractional Hours into HH:MM String
+        function formatTime(hours) {
+            if (hours === null || isNaN(hours)) return "--:--";
+            let h = Math.floor(hours);
+            let m = Math.floor((hours - h) * 60);
+            let s = Math.round((((hours - h) * 60) - m) * 60);
+
+            if (s >= 60) { m++; s = 0; }
+            if (m >= 60) { h++; m = 0; }
+
+            h = (h % 24 + 24) % 24;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        }
+
+        // Format Degree to Deg, Min, Sec
+        function formatDMS(degValue) {
+            const absolute = Math.abs(degValue);
+            const d = Math.floor(absolute);
+            const minutesNotTruncated = (absolute - d) * 60;
+            const m = Math.floor(minutesNotTruncated);
+            const s = Math.round((minutesNotTruncated - m) * 60);
+            const sign = degValue < 0 ? "-" : "";
+            return `${sign}${d}° ${m}' ${s}"`;
+        }
+
+        let calculatedTimes = {};
+
+        // Calculate and Update UI
+        function calculateAndRender() {
+            updateStateFromInputs();
+
+            const times = computePrayerTimes(
+                state.date, state.lat, state.lng, state.elevation,
+                state.timeZone, state.ihtiyati, state.subuhAngle, state.isyaAngle
+            );
+
+            calculatedTimes = times;
+
+            // Update Header Date
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentFullDate').innerText = state.date.toLocaleDateString('id-ID', dateOptions) + ` • Koordinat: (${state.lat.toFixed(4)}°, ${state.lng.toFixed(4)}°)`;
+
+            // Render Today's Cards
+            renderPrayerCards(times);
+
+            // Update Qibla Widget
+            const qibla = calculateQibla(state.lat, state.lng);
+            document.getElementById('qiblaAzimuth').innerText = `${qibla.azimuth.toFixed(2)}°`;
+            document.getElementById('qiblaDegree').innerText = `${qibla.azimuth.toFixed(1)}° UB-TL`;
+            document.getElementById('qiblaDistance').innerText = `${qibla.distance.toLocaleString('id-ID')} km`;
+
+            // Update Astro Technical Specs
+            document.getElementById('astroDeclination').innerText = formatDMS(times.delta);
+            document.getElementById('astroEot').innerText = `${Math.floor(times.e)}m ${Math.round((times.e % 1)*60)}s`;
+            document.getElementById('astroTransit').innerText = formatTime(times.transit);
+            document.getElementById('astroDip').innerText = `${(times.dip * 60).toFixed(1)}'`;
+
+            // Render Monthly Table
+            generateMonthlyTable();
+
+            // Trigger Immediate Countdown Update
+            updateCountdown();
+        }
+
+        // Render Cards for Today's Prayer Times
+        function renderPrayerCards(times) {
+            const cardData = [
+                { id: 'subuh', name: 'Subuh', icon: 'sunrise', time: times.subuh },
+                { id: 'terbit', name: 'Terbit', icon: 'sun-medium', time: times.terbit },
+                { id: 'dhuha', name: 'Dhuha', icon: 'sun', time: times.dhuha },
+                { id: 'dzuhur', name: 'Dzuhur', icon: 'sun', time: times.dzuhur },
+                { id: 'ashar', name: 'Ashar', icon: 'sun-dim', time: times.ashar },
+                { id: 'maghrib', name: 'Maghrib', icon: 'sunset', time: times.maghrib },
+                { id: 'isya', name: 'Isya', icon: 'moon', time: times.isya },
+            ];
+
+            const container = document.getElementById('prayerCardsContainer');
+            container.innerHTML = '';
+
+            cardData.forEach(item => {
+                const timeFormatted = formatTime(item.time);
+                const cardHtml = `
+                    <div id="card-${item.id}" class="glass-card glass-card-hover rounded-2xl p-4 text-center border transition-all duration-300 flex flex-col items-center justify-between shadow-lg">
+                        <div class="p-2 rounded-xl bg-emerald-950/80 border border-emerald-800/40 text-amber-400 mb-2">
+                            <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">${item.name}</span>
+                        <div class="text-xl font-bold font-mono text-white my-1">${timeFormatted}</div>
+                        <span class="text-[10px] text-slate-400 font-mono">WIB</span>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+
+            lucide.createIcons();
+        }
+
+        // Countdown Timer Logic
+        function updateCountdown() {
+            if (!calculatedTimes || !calculatedTimes.dzuhur) return;
+
+            const now = new Date();
+            const currentYear = state.date.getFullYear();
+            const currentMonth = state.date.getMonth();
+            const currentDay = state.date.getDate();
+
+            const prayerList = [
+                { id: 'subuh', name: 'Subuh', hourVal: calculatedTimes.subuh },
+                { id: 'terbit', name: 'Terbit (Syuruq)', hourVal: calculatedTimes.terbit },
+                { id: 'dhuha', name: 'Dhuha', hourVal: calculatedTimes.dhuha },
+                { id: 'dzuhur', name: 'Dzuhur', hourVal: calculatedTimes.dzuhur },
+                { id: 'ashar', name: 'Ashar', hourVal: calculatedTimes.ashar },
+                { id: 'maghrib', name: 'Maghrib', hourVal: calculatedTimes.maghrib },
+                { id: 'isya', name: 'Isya', hourVal: calculatedTimes.isya },
+            ];
+
+            let nextPrayer = null;
+            let targetTime = null;
+
+            // Find next prayer today
+            for (let prayer of prayerList) {
+                const h = Math.floor(prayer.hourVal);
+                const m = Math.floor((prayer.hourVal - h) * 60);
+                const s = Math.round((((prayer.hourVal - h) * 60) - m) * 60);
+
+                const pDate = new Date(currentYear, currentMonth, currentDay, h, m, s);
+                if (pDate > now) {
+                    nextPrayer = prayer;
+                    targetTime = pDate;
+                    break;
+                }
+            }
+
+            // If all prayers passed today, target tomorrow's Subuh
+            if (!nextPrayer) {
+                const tomTimes = computePrayerTimes(
+                    new Date(currentYear, currentMonth, currentDay + 1),
+                    state.lat, state.lng, state.elevation, state.timeZone,
+                    state.ihtiyati, state.subuhAngle, state.isyaAngle
+                );
+                const h = Math.floor(tomTimes.subuh);
+                const m = Math.floor((tomTimes.subuh - h) * 60);
+                const s = Math.round((((tomTimes.subuh - h) * 60) - m) * 60);
+
+                nextPrayer = { id: 'subuh', name: 'Subuh (Besok)', hourVal: tomTimes.subuh };
+                targetTime = new Date(currentYear, currentMonth, currentDay + 1, h, m, s);
+            }
+
+            // Update UI Active Card Highlight
+            prayerList.forEach(p => {
+                const el = document.getElementById(`card-${p.id}`);
+                if (el) {
+                    if (p.id === nextPrayer.id) {
+                        el.classList.add('border-amber-400', 'bg-emerald-900/60', 'shadow-amber-500/10');
+                        el.classList.remove('border-emerald-800/20');
+                    } else {
+                        el.classList.remove('border-amber-400', 'bg-emerald-900/60', 'shadow-amber-500/10');
+                        el.classList.add('border-emerald-800/20');
+                    }
+                }
+            });
+
+            // Calculate Difference
+            const diffMs = targetTime - now;
+            const diffSec = Math.floor((diffMs / 1000) % 60);
+            const diffMin = Math.floor((diffMs / (1000 * 60)) % 60);
+            const diffHrs = Math.floor((diffMs / (1000 * 60 * 60)));
+
+            const formattedCountdown = `${String(diffHrs).padStart(2, '0')}:${String(diffMin).padStart(2, '0')}:${String(diffSec).padStart(2, '0')}`;
+            
+            document.getElementById('nextPrayerLabel').innerText = `Menuju Sholat ${nextPrayer.name}`;
+            document.getElementById('countdownTimer').innerText = formattedCountdown;
+            document.getElementById('nextPrayerTime').innerText = `Pukul ${formatTime(nextPrayer.hourVal)} WIB`;
+        }
+
+        // Generate Monthly Prayer Times Table
+        function generateMonthlyTable() {
+            const m = parseInt(document.getElementById('monthlySelectMonth').value);
+            const y = parseInt(document.getElementById('monthlySelectYear').value);
+
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            document.getElementById('monthlyTableTitle').innerText = `Jadwal Bulan ${monthNames[m]} ${y} • ${state.locationName}`;
+
+            const tbody = document.getElementById('monthlyTableBody');
+            tbody.innerHTML = '';
+
+            const today = new Date();
+            const isCurrentMonthYear = (today.getFullYear() === y && today.getMonth() === m);
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const iterDate = new Date(y, m, d);
+                const t = computePrayerTimes(
+                    iterDate, state.lat, state.lng, state.elevation,
+                    state.timeZone, state.ihtiyati, state.subuhAngle, state.isyaAngle
+                );
+
+                const isToday = isCurrentMonthYear && (today.getDate() === d);
+                const trClass = isToday ? "bg-amber-500/20 text-amber-300 font-bold" : "hover:bg-slate-800/40";
+
+                const row = `
+                    <tr class="${trClass} transition-colors">
+                        <td class="px-3 py-2.5 font-bold">${d}</td>
+                        <td class="px-3 py-2.5">${formatTime(t.subuh)}</td>
+                        <td class="px-3 py-2.5 text-slate-400">${formatTime(t.terbit)}</td>
+                        <td class="px-3 py-2.5 text-slate-400">${formatTime(t.dhuha)}</td>
+                        <td class="px-3 py-2.5">${formatTime(t.dzuhur)}</td>
+                        <td class="px-3 py-2.5">${formatTime(t.ashar)}</td>
+                        <td class="px-3 py-2.5">${formatTime(t.maghrib)}</td>
+                        <td class="px-3 py-2.5">${formatTime(t.isya)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            }
+        }
+    </script>
+</body>
+</html>
